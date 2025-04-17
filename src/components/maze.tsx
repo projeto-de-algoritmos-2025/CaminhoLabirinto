@@ -8,6 +8,10 @@ interface Position {
   row: number;
   col: number;
 }
+interface Node {
+  position: Position;
+  parent: Node | null;
+}
 
 const GRID_SIZE = 10;
 
@@ -33,6 +37,8 @@ export default function Maze() {
       newGrid.push(row);
     }
     setGrid(newGrid);
+    setStartPosition(null);
+    setEndPosition(null);
   };
 
   const handleCellClick = (row: number, col: number) => {
@@ -60,8 +66,70 @@ export default function Maze() {
     setGrid(newGrid);
   };
 
-  const startVisualization = () => {};
   const resetVisualization = () => {};
+
+  const bfs = () => {
+    if (!startPosition || !endPosition) {
+      alert("Defina os pontos de início e fim primeiro!");
+      return;
+    }
+
+    resetVisualization();
+
+    const directions = [
+      { row: -1, col: 0 },
+      { row: 0, col: 1 },
+      { row: 1, col: 0 },
+      { row: 0, col: -1 },
+    ];
+
+    const queue: Node[] = [];
+
+    const visited: number[][] = Array(GRID_SIZE)
+      .fill(null)
+      .map(() => Array(GRID_SIZE).fill(0));
+    const startNode: Node = { position: startPosition, parent: null };
+    queue.push(startNode);
+    visited[startPosition.row][startPosition.col] = 1;
+
+    let endNode: Node | null = null;
+
+    while (queue.length > 0) {
+      const currentNode = queue.shift()!;
+      const { row, col } = currentNode.position;
+
+      if (row === endPosition.row && col === endPosition.col) {
+        endNode = currentNode;
+        break;
+      }
+
+      for (const dir of directions) {
+        const newRow = row + dir.row;
+        const newCol = col + dir.col;
+
+        if (
+          newRow >= 0 &&
+          newRow < GRID_SIZE &&
+          newCol >= 0 &&
+          newCol < GRID_SIZE &&
+          !visited[newRow][newCol] &&
+          grid[newRow][newCol] !== "wall"
+        ) {
+          const newNode: Node = {
+            position: { row: newRow, col: newCol },
+            parent: currentNode,
+          };
+
+          queue.push(newNode);
+          visited[newRow][newCol] = 1;
+        }
+      }
+    }
+    console.log("startNode: ", startNode);
+    console.log("endNode: ", endNode);
+    console.log("visited: ", visited);
+  };
+
   const getHoverClass = () => {
     switch (drawMode) {
       case "wall":
@@ -116,7 +184,7 @@ export default function Maze() {
           <Flag className="h-4 w-4" /> Fim
         </Button>
         <Button
-          onClick={startVisualization}
+          onClick={bfs}
           className="flex items-center gap-1 cursor-pointer"
         >
           Iniciar
@@ -149,10 +217,12 @@ export default function Maze() {
             row.map((cell, colIndex) => (
               <Button
                 key={`${rowIndex}-${colIndex}`}
-                className={`w-10 h-10 sm:w-10 sm:h-10 cursor-pointer ${getHoverClass()}                 
+                className={`text-black w-10 h-10 sm:w-10 sm:h-10 cursor-pointer ${getHoverClass()}                 
                 )} ${getCellClass(cell)}`}
                 onClick={() => handleCellClick(rowIndex, colIndex)}
-              />
+              >
+                {rowIndex}-{colIndex}
+              </Button>
             ))
           )}
         </div>
