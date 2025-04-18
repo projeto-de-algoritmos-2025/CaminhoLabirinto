@@ -1,9 +1,23 @@
 "use client";
 import { useState, useEffect } from "react";
 import { Button } from "./ui/button";
-import { BrickWall, Flag, House, LandPlot, MapPin, RotateCcw, Trash2 } from "lucide-react";
+import {
+  BrickWall,
+  Flag,
+  House,
+  LandPlot,
+  MapPin,
+  RotateCcw,
+  Trash2,
+} from "lucide-react";
 
-type CellType = "empty" | "wall" | "startPoint" | "endPoint" | "visited" | "path"
+type CellType =
+  | "empty"
+  | "wall"
+  | "startPoint"
+  | "endPoint"
+  | "visited"
+  | "path";
 interface Position {
   row: number;
   col: number;
@@ -13,9 +27,9 @@ interface Node {
   parent: Node | null;
 }
 
-const GRID_SIZE = 10;
+const GRID_SIZE = 15;
 
-const ANIMATION_SPEED = 20 // ms
+const ANIMATION_SPEED = 20; // ms
 
 export default function Maze() {
   const [grid, setGrid] = useState<CellType[][]>([]);
@@ -24,7 +38,7 @@ export default function Maze() {
   );
   const [startPosition, setStartPosition] = useState<Position | null>(null);
   const [endPosition, setEndPosition] = useState<Position | null>(null);
-  const [isAnimating, setIsAnimating] = useState(false)
+  const [isAnimating, setIsAnimating] = useState(false);
 
   useEffect(() => {
     initializeGrid();
@@ -71,66 +85,64 @@ export default function Maze() {
 
   const resetVisualization = () => {
     setGrid((prevGrid) => {
-      const newGrid = [...prevGrid]
+      const newGrid = [...prevGrid];
       for (let i = 0; i < GRID_SIZE; i++) {
         for (let j = 0; j < GRID_SIZE; j++) {
           if (newGrid[i][j] === "visited" || newGrid[i][j] === "path") {
-            newGrid[i][j] = "empty"
+            newGrid[i][j] = "empty";
           }
         }
       }
-      return newGrid
-    })
+      return newGrid;
+    });
   };
-
-
 
   const bfs = () => {
     if (!startPosition || !endPosition) {
-      alert("Defina os pontos de início e fim primeiro!")
-      return
+      alert("Defina os pontos de início e fim primeiro!");
+      return;
     }
 
-    setIsAnimating(true)
-    resetVisualization()
+    setIsAnimating(true);
+    resetVisualization();
 
     const directions = [
       { row: -1, col: 0 },
       { row: 0, col: 1 },
       { row: 1, col: 0 },
       { row: 0, col: -1 },
-    ]
+    ];
 
-    const queue: Node[] = []
+    const queue: Node[] = [];
 
     const visited: boolean[][] = Array(GRID_SIZE)
       .fill(null)
-      .map(() => Array(GRID_SIZE).fill(false))
+      .map(() => Array(GRID_SIZE).fill(false));
 
-    const startNode: Node = { position: startPosition, parent: null }
-    queue.push(startNode)
-    visited[startPosition.row][startPosition.col] = true
+    const startNode: Node = { position: startPosition, parent: null };
+    queue.push(startNode);
+    visited[startPosition.row][startPosition.col] = true;
 
-    const visitOrder: Position[] = []
+    const visitOrder: Position[] = [];
 
-    let endNode: Node | null = null
+    let endNode: Node | null = null;
 
     while (queue.length > 0) {
-      const currentNode = queue.shift()!
-      const { row, col } = currentNode.position
+      const currentNode = queue.shift()!;
+      const { row, col } = currentNode.position;
 
       if (row === endPosition.row && col === endPosition.col) {
-        endNode = currentNode
-        break
+        endNode = currentNode;
+        break;
       }
 
       if (!(row === startPosition.row && col === startPosition.col)) {
-        visitOrder.push({ row, col })
+        visitOrder.push({ row, col });
       }
 
       for (const dir of directions) {
-        const newRow = row + dir.row
-        const newCol = col + dir.col
+        const newRow = row + dir.row;
+        const newCol = col + dir.col;
 
         if (
           newRow >= 0 &&
@@ -143,86 +155,84 @@ export default function Maze() {
           const newNode: Node = {
             position: { row: newRow, col: newCol },
             parent: currentNode,
-          }
+          };
 
-          queue.push(newNode)
-          visited[newRow][newCol] = true
+          queue.push(newNode);
+          visited[newRow][newCol] = true;
         }
       }
     }
 
-    const path: Position[] = []
+    const path: Position[] = [];
     if (endNode) {
-      let current: Node | null = endNode
+      let current: Node | null = endNode;
       while (current && current.parent) {
-        const { row, col } = current.position
+        const { row, col } = current.position;
 
         if (!(row === endPosition.row && col === endPosition.col)) {
-          path.unshift({ row, col })
+          path.unshift({ row, col });
         }
 
-        current = current.parent
+        current = current.parent;
       }
     }
 
-    animateVisitedCells(visitOrder, path)
+    animateVisitedCells(visitOrder, path);
   };
 
-
   const animateVisitedCells = (visitedOrder: Position[], path: Position[]) => {
-    let i = 0
+    let i = 0;
     const visitInterval = setInterval(() => {
       if (i === visitedOrder.length) {
-        clearInterval(visitInterval)
+        clearInterval(visitInterval);
 
         if (path.length > 0) {
-          animatePath(path)
+          animatePath(path);
         } else {
-          setIsAnimating(false)
+          setIsAnimating(false);
           if (path.length === 0 && visitedOrder.length > 0) {
-            alert("Não foi possível encontrar um caminho!")
+            alert("Não foi possível encontrar um caminho!");
           }
         }
-        return
+        return;
       }
 
-      const { row, col } = visitedOrder[i]
+      const { row, col } = visitedOrder[i];
 
       setGrid((prevGrid) => {
-        const newGrid = [...prevGrid]
+        const newGrid = [...prevGrid];
         if (newGrid[row][col] === "empty") {
-          newGrid[row][col] = "visited"
+          newGrid[row][col] = "visited";
         }
-        return newGrid
-      })
+        return newGrid;
+      });
 
-      i++
-    }, ANIMATION_SPEED)
-  }
-
+      i++;
+    }, ANIMATION_SPEED);
+  };
 
   const animatePath = (path: Position[]) => {
-    let i = 0
+    let i = 0;
     const pathInterval = setInterval(() => {
       if (i === path.length) {
-        clearInterval(pathInterval)
-        setIsAnimating(false)
-        return
+        clearInterval(pathInterval);
+        setIsAnimating(false);
+        return;
       }
 
-      const { row, col } = path[i]
+      const { row, col } = path[i];
 
       setGrid((prevGrid) => {
-        const newGrid = [...prevGrid]
+        const newGrid = [...prevGrid];
         if (newGrid[row][col] === "visited") {
-          newGrid[row][col] = "path"
+          newGrid[row][col] = "path";
         }
-        return newGrid
-      })
+        return newGrid;
+      });
 
-      i++
-    }, ANIMATION_SPEED * 2)
-  }
+      i++;
+    }, ANIMATION_SPEED * 2);
+  };
   const getHoverClass = () => {
     switch (drawMode) {
       case "wall":
@@ -246,9 +256,9 @@ export default function Maze() {
       case "endPoint":
         return "bg-red-500";
       case "visited":
-        return "bg-blue-300"
+        return "bg-blue-300";
       case "path":
-        return "bg-yellow-400"
+        return "bg-yellow-400";
       default:
         return "bg-white";
     }
@@ -315,13 +325,19 @@ export default function Maze() {
             row.map((cell, colIndex) => (
               <Button
                 key={`${rowIndex}-${colIndex}`}
-                className={`text-black w-10 h-10 sm:w-10 sm:h-10 cursor-pointer ${getHoverClass()}                 
+                className={`text-black w-8 h-8 sm:w-8 sm:h-8 cursor-pointer ${getHoverClass()}                 
                 )} ${getCellClass(cell)}`}
                 onClick={() => handleCellClick(rowIndex, colIndex)}
-              > {cell === "wall" ?
-                <BrickWall color="white" className="h-8! w-8!" />
-                : cell === "endPoint" ? <LandPlot color="white" className="h-7! w-7!" /> : cell === "startPoint" ? <House color="white" className="h-7! w-7!" /> : <></>}
-
+              >
+                {cell === "wall" ? (
+                  <BrickWall color="white" className="h-8! w-8!" />
+                ) : cell === "endPoint" ? (
+                  <LandPlot color="white" className="h-7! w-7!" />
+                ) : cell === "startPoint" ? (
+                  <House color="white" className="h-7! w-7!" />
+                ) : (
+                  <></>
+                )}
               </Button>
             ))
           )}
