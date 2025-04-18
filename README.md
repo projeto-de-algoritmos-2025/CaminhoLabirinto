@@ -26,7 +26,24 @@ Imagem 3:
 ![alt text](image-2.png)
 
 ## Instalação
+
 Não é necessario instalar, fiazemor o deploy do programa, basta acessar: https://labirinto-green.vercel.app/
+
+Mas caso queria rodar localmente, basta:
+
+1️⃣ Clone o repositório: 
+
+git clone https://github.com/ArtAssLou/labirinto.git
+
+2️⃣ Instale as dependências:
+
+npm install
+
+3️⃣ Inicie o servidor de desenvolvimento: 
+
+npm run dev
+
+
 
 ## Uso
 É um jogo educacional que alunos que estudam algoritmos podem ver de forma visual como o BFS percorre o grafo para fazer uma busca.
