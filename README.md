@@ -33,7 +33,7 @@ Mas caso queria rodar localmente, basta:
 
 1️⃣ Clone o repositório: 
 
-git clone https://github.com/ArtAssLou/labirinto.git
+git clone https://github.com/projeto-de-algoritmos-2025/CaminhoLabirinto.git
 
 2️⃣ Instale as dependências:
 
