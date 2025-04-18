@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { Button } from "./ui/button";
-import { Flag, MapPin, RotateCcw, Trash2 } from "lucide-react";
+import { BrickWall, Flag, House, LandPlot, MapPin, RotateCcw, Trash2 } from "lucide-react";
 
 type CellType = "empty" | "wall" | "startPoint" | "endPoint" | "visited" | "path"
 interface Position {
@@ -69,7 +69,19 @@ export default function Maze() {
     setGrid(newGrid);
   };
 
-  const resetVisualization = () => { };
+  const resetVisualization = () => {
+    setGrid((prevGrid) => {
+      const newGrid = [...prevGrid]
+      for (let i = 0; i < GRID_SIZE; i++) {
+        for (let j = 0; j < GRID_SIZE; j++) {
+          if (newGrid[i][j] === "visited" || newGrid[i][j] === "path") {
+            newGrid[i][j] = "empty"
+          }
+        }
+      }
+      return newGrid
+    })
+  };
 
 
 
@@ -306,8 +318,10 @@ export default function Maze() {
                 className={`text-black w-10 h-10 sm:w-10 sm:h-10 cursor-pointer ${getHoverClass()}                 
                 )} ${getCellClass(cell)}`}
                 onClick={() => handleCellClick(rowIndex, colIndex)}
-              >
-                {rowIndex}-{colIndex}
+              > {cell === "wall" ?
+                <BrickWall color="white" className="h-8! w-8!" />
+                : cell === "endPoint" ? <LandPlot color="white" className="h-7! w-7!" /> : cell === "startPoint" ? <House color="white" className="h-7! w-7!" /> : <></>}
+
               </Button>
             ))
           )}
