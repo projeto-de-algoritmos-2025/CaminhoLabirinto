@@ -1,4 +1,4 @@
-import MazeVisualizer from "@/components/maze";
+import Maze from "@/components/maze";
 
 export default function Home() {
   return (
@@ -11,7 +11,19 @@ export default function Home() {
         pontos de início e fim, e veja o algoritmo BFS encontrar o caminho mais
         curto.
       </p>
-      <MazeVisualizer />
+      <Maze />
+      <p className="text-center max-w-2xl mt-8 text-gray-600">
+        Projeto feito por:
+      </p>
+      <p className="text-center max-w-2xl text-gray-600">
+        Emerson Luis Teles dos Santos - 200017322
+      </p>
+      <p className="text-center max-w-2xl text-gray-600">
+        Arthur D'Assumpção Loureiro - 190084570
+      </p>
+      <p className="text-center max-w-2xl mt-4 text-gray-600">
+        UnB - Programação e Algoritmos
+      </p>
     </main>
   );
 }
