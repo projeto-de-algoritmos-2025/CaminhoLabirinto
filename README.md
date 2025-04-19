@@ -49,4 +49,4 @@ npm run dev
 É um jogo educacional que alunos que estudam algoritmos podem ver de forma visual como o BFS percorre o grafo para fazer uma busca.
 
 ## Outros
-Video: 
+Video da apresentação: https://youtu.be/eu1Btl0A7Lk
